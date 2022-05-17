@@ -20,7 +20,7 @@ variable "max_size" {
 variable "desired_capacity" {
   description = "Auto Scaling Group Desired Capacity"
   type        = number
-  default     = 0
+  default     = 1
 }
 variable "heartbeat_time" {
   description = "Heartbeat Time"

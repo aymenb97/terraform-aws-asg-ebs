@@ -39,8 +39,12 @@ module "auto_scaling_group" {
   launch_template_name        = "example-asg"
   launch_template_description = "Launch template example"
   update_default_version      = true
+  security_groups             = ["sg-02ea136ed31d4087d"]
+  use_lt                      = true
+  create_lt                   = true
 
-  image_id          = data.aws_ami._.image_id
+  # image_id          = data.aws_ami._.image_id
+  image_id          = "ami-0022f774911c1d690"
   instance_type     = var.instance_type
   ebs_optimized     = true
   enable_monitoring = true
@@ -60,7 +64,7 @@ module "auto_scaling_group" {
       device_name = "/dev/sda1"
       no_device   = 1
       ebs = {
-        delete_on_termination = true
+        delete_on_termination = false
         encrypted             = true
         volume_size           = var.secondary_volume_size
         volume_type           = "gp2"
