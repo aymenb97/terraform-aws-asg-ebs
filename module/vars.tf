@@ -27,11 +27,7 @@ variable "heartbeat_time" {
   type        = number
   default     = 300
 }
-variable "instance_type" {
-  description = "Instance Type"
-  type        = string
-  default     = "t2.micro"
-}
+
 variable "asg_name" {
   description = "Name of the ASG"
   type        = string
@@ -43,11 +39,7 @@ variable "az" {
   type        = string
   default     = "us-east-1a"
 }
-variable "subnets" {
-  description = "ASG Subnets"
-  type        = list(string)
-  default     = ["subnet-00eef32c949c26e76"]
-}
+
 variable "root_volume_size" {
   description = "Root Volume size in GB"
   type        = number
@@ -61,4 +53,13 @@ variable "secondary_volume_size" {
 variable "key_name" {
   description = "SSH Key pair name"
   type        = string
+}
+variable "instance_type" {
+  description = "Instance Type"
+  type        = string
+  default     = "t2.micro"
+}
+variable "subnets" {
+  description = "List Subnets"
+  type        = list(string)
 }
