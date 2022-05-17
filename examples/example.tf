@@ -4,3 +4,6 @@ module "lambda" {
   key_name    = "test-vpc"
   subnets     = ["subnet-03338579317d8c855"]
 }
+output "name" {
+  value = module.lambda.arn
+}
