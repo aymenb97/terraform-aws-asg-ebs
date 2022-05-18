@@ -1,11 +1,10 @@
-module "lambda_function" {
-  source        = "terraform-aws-modules/lambda/aws"
-  function_name = var.function_name
-  description   = "Lambda function that attaches/detaches volumes on ASG event"
-  handler       = "func.lambda_handler"
-  runtime       = "python3.8"
-  source_path   = "${path.module}/src/func.py"
-  lambda_role   = aws_iam_role.lambda_exec.arn
+terraform {
+  required_providers {
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.2.0"
+    }
+  }
 }
 resource "aws_iam_role" "lambda_exec" {
   name = "lambda-asg-ebs"
@@ -21,9 +20,25 @@ resource "aws_iam_role" "lambda_exec" {
     }]
   })
 }
+data "archive_file" "lambda_asg_attach" {
+  type        = "zip"
+  source_dir  = "${path.module}/src"
+  output_path = "${path.module}/lambda-asg-attach.zip"
+}
+resource "aws_lambda_function" "lambda_asg" {
+  function_name    = var.function_name
+  runtime          = "python3.8"
+  handler          = "func.handler"
+  filename         = "${path.module}/lambda-asg-attach.zip"
+  source_code_hash = data.archive_file.lambda_asg_attach.output_base64sha256
+  role             = aws_iam_role.lambda_exec.arn
+}
+output "arn" {
+  value = aws_lambda_function.lambda_asg.arn
+}
 resource "aws_iam_role_policy_attachment" "_" {
-  role       = aws_iam_role.lambda_exec.name
   for_each   = var.policy_arns
+  role       = aws_iam_role.lambda_exec.name
   policy_arn = each.key
 }
 

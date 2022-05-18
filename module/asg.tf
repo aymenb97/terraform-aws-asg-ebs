@@ -25,7 +25,7 @@ resource "aws_launch_template" "launch_temp" {
   image_id      = "ami-0022f774911c1d690"
   instance_type = var.instance_type
   block_device_mappings {
-    device_name = "/dev/sda1"
+    device_name = "/dev/sdb"
     ebs {
       delete_on_termination = false
       encrypted             = true
