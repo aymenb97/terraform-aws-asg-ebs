@@ -15,10 +15,11 @@ resource "aws_cloudwatch_event_target" "lambda" {
 output "arn" {
   value = module.lambda_function.lambda_function_arn
 }
-resource "aws_lambda_permission" "allow_cloudwatch_waktetime_to_invoke" {
-  statement_id  = "AllowWaktimeExecutionFromCloudWatch"
+resource "aws_lambda_permission" "allow_cloudwatch_to_invoke_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_function.lambda_function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.l_trigger.arn
 }
+

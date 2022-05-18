@@ -17,8 +17,6 @@ resource "aws_autoscaling_group" "bar" {
     lifecycle_transition = "autoscaling:EC2_INSTANCE_TERMINATING"
   }
   force_delete = true
-  #launch_configuration      = aws_launch_configuration.foobar.name
-
 }
 
 
@@ -26,4 +24,19 @@ resource "aws_autoscaling_group" "bar" {
 resource "aws_launch_template" "launch_temp" {
   image_id      = "ami-0022f774911c1d690"
   instance_type = var.instance_type
+  block_device_mappings {
+    device_name = "/dev/sda1"
+    ebs {
+      delete_on_termination = false
+      encrypted             = true
+      volume_size           = var.root_volume_size
+      volume_type           = "gp2"
+    }
+  }
+  tag_specifications {
+    resource_type = "volume"
+    tags = {
+      Name = "prod"
+    }
+  }
 }
