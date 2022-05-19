@@ -28,6 +28,7 @@ data "archive_file" "lambda_asg_attach" {
 resource "aws_lambda_function" "lambda_asg" {
   function_name    = var.function_name
   runtime          = "python3.8"
+  timeout          = "300"
   handler          = "func.handler"
   filename         = "${path.module}/lambda-asg-attach.zip"
   source_code_hash = data.archive_file.lambda_asg_attach.output_base64sha256

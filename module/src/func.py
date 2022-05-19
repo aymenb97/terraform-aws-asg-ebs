@@ -1,8 +1,9 @@
 import boto3
 import os
+import asyncio
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     print("EVENT", event)
     message = event['detail']
     ec2 = boto3.resource("ec2", region_name="us-east-1")
@@ -18,13 +19,9 @@ def lambda_handler(event, context):
     for vol in instance.volumes.all():
         if vol.attachments[0][u'Device'] == '/dev/sdb':
             volume = ec2.Volume(vol.id)
-            ec2.create_snapshot(
-                VolumeId=vol.id, Description="Snapshot from volume")
-            volume.detach_from_instance(
-                Device='/dev/sdb',
-                InstanceId=event['detail']['EC2InstanceId']
-            )
-            volume.delete()
+            InstanceId = event['detail']['EC2InstanceId']
+            ec2.create_snapshot(VolumeId=vol.id)
+            detach_volume(volume, '/dev/sdb', vol.id)
             asgClient = boto3.client('autoscaling')
             lifeCycleHook = message['LifecycleHookName']
             autoScalingGroup = message['AutoScalingGroupName']
@@ -36,3 +33,13 @@ def lambda_handler(event, context):
                 InstanceId=instanceId
             )
     return None
+
+
+async def detach_volume(volume, device, volumeId):
+
+    await asyncio.volume.detach_volume(
+        Device=device,
+        volumeId=volumeId
+    )
+    volume.delete()
+    print("Volume Deleted")
