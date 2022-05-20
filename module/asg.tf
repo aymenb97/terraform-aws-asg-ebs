@@ -34,9 +34,9 @@ resource "aws_launch_template" "launch_temp" {
     }
   }
   tag_specifications {
-    resource_type = "volume"
+    resource_type = "instance"
     tags = {
-      Name = "prod"
+      env = "prod"
     }
   }
 }
